@@ -39,6 +39,7 @@ def train_logistic_regression(
 
 
 def extract_logreg_coefficients(pipeline: Pipeline, feature_names) -> Dict[str, float]:
+    """Return logistic regression coefficients mapped to transformed feature names."""
     # Coefficients are only directly interpretable if binary classification and aligned feature names.
     model = pipeline.named_steps["model"]
     coef = model.coef_[0]

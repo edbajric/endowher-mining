@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Dict, Iterable
 
 import joblib
 from sklearn.ensemble import RandomForestClassifier
@@ -81,7 +82,9 @@ def train_xgboost_optional(
     return pipeline
 
 
-def extract_tree_feature_importances(pipeline, feature_names):
+def extract_tree_feature_importances(
+    pipeline: Pipeline, feature_names: Iterable[str]
+) -> Dict[str, float]:
     """Return feature importance mapping for tree-based models.
 
     TODO: Ensure feature_names come from fitted preprocessor.get_feature_names_out().
