@@ -1,12 +1,22 @@
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
+from pandas import Series
 
 from src.utils.metrics import compute_classification_metrics
 from src.utils.plotting import save_confusion_matrix, save_roc_curve
 
 
-def evaluate_binary_model(model, x_test, y_test, model_name: str, dataset_name: str, figures_dir: Path, tables_dir: Path):
+def evaluate_binary_model(
+    model: Any,
+    x_test: pd.DataFrame,
+    y_test: Series,
+    model_name: str,
+    dataset_name: str,
+    figures_dir: Path,
+    tables_dir: Path,
+):
     y_pred = model.predict(x_test)
 
     y_prob = None

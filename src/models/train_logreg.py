@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Iterable
 
 import joblib
 from sklearn.linear_model import LogisticRegression
@@ -44,7 +44,9 @@ def train_logistic_regression(
     return pipeline
 
 
-def extract_logreg_coefficients(pipeline: Pipeline, feature_names) -> Dict[str, float]:
+def extract_logreg_coefficients(
+    pipeline: Pipeline, feature_names: Iterable[str]
+) -> Dict[str, float]:
     """Return logistic regression coefficients mapped to transformed feature names."""
     # Coefficients are only directly interpretable if binary classification and aligned feature names.
     model = pipeline.named_steps["model"]

@@ -14,7 +14,17 @@ def compare_feature_importance_tables(
     pcos = pd.read_csv(pcos_table_path)
     endo = pd.read_csv(endo_table_path)
 
-    # TODO: Ensure both tables contain a 'feature' column before use.
+    if "feature" not in pcos.columns:
+        raise KeyError(
+            f"'feature' column missing in PCOS table: {pcos_table_path}. "
+            "Include a 'feature' column before running cross-dataset comparison."
+        )
+    if "feature" not in endo.columns:
+        raise KeyError(
+            f"'feature' column missing in endometriosis table: {endo_table_path}. "
+            "Include a 'feature' column before running cross-dataset comparison."
+        )
+
     pcos = pcos.copy()
     endo = endo.copy()
     pcos["feature_key"] = pcos["feature"].map(normalize_feature_name)
