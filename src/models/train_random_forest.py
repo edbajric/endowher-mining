@@ -15,6 +15,8 @@ def train_random_forest(
     dataset_name: str,
     model_out: Path,
     random_state: int = 42,
+    n_estimators: int = 300,
+    class_weight: str = "balanced",
 ) -> Pipeline:
     if dataset_name == "pcos":
         preprocessor = build_pcos_preprocessor(x_train, scale_numeric=False)
@@ -29,9 +31,9 @@ def train_random_forest(
             (
                 "model",
                 RandomForestClassifier(
-                    n_estimators=300,
+                    n_estimators=n_estimators,
                     random_state=random_state,
-                    class_weight="balanced",
+                    class_weight=class_weight,
                 ),
             ),
         ]
@@ -48,6 +50,9 @@ def train_xgboost_optional(
     dataset_name: str,
     model_out: Path,
     random_state: int = 42,
+    n_estimators: int = 300,
+    learning_rate: float = 0.05,
+    max_depth: int = 4,
 ):
     try:
         from xgboost import XGBClassifier
@@ -69,9 +74,9 @@ def train_xgboost_optional(
             (
                 "model",
                 XGBClassifier(
-                    n_estimators=300,
-                    learning_rate=0.05,
-                    max_depth=4,
+                    n_estimators=n_estimators,
+                    learning_rate=learning_rate,
+                    max_depth=max_depth,
                     random_state=random_state,
                     eval_metric="logloss",
                 ),

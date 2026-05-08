@@ -15,6 +15,8 @@ def train_logistic_regression(
     dataset_name: str,
     model_out: Path,
     random_state: int = 42,
+    max_iter: int = 1000,
+    class_weight: str = "balanced",
 ) -> Pipeline:
     if dataset_name == "pcos":
         preprocessor = build_pcos_preprocessor(x_train, scale_numeric=True)
@@ -28,7 +30,11 @@ def train_logistic_regression(
             ("preprocessor", preprocessor),
             (
                 "model",
-                LogisticRegression(max_iter=1000, random_state=random_state, class_weight="balanced"),
+                LogisticRegression(
+                    max_iter=max_iter,
+                    random_state=random_state,
+                    class_weight=class_weight,
+                ),
             ),
         ]
     )
