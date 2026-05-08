@@ -1,3 +1,7 @@
+"""Metrics helpers for classification."""
+
+from typing import Dict, Optional
+
 import numpy as np
 from sklearn.metrics import (
     accuracy_score,
@@ -9,8 +13,16 @@ from sklearn.metrics import (
 )
 
 
-def compute_classification_metrics(y_true, y_pred, y_prob=None):
-    metrics = {
+def compute_classification_metrics(
+    y_true,
+    y_pred,
+    y_prob: Optional[np.ndarray] = None,
+) -> Dict[str, object]:
+    """Compute standard binary classification metrics.
+
+    Returns a dict with accuracy, precision, recall, f1, roc_auc, and confusion_matrix.
+    """
+    metrics: Dict[str, object] = {
         "accuracy": accuracy_score(y_true, y_pred),
         "precision": precision_score(y_true, y_pred, zero_division=0),
         "recall": recall_score(y_true, y_pred, zero_division=0),

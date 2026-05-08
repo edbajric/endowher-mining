@@ -1,40 +1,47 @@
-# Python cache / compiled files
 __pycache__/
 *.py[cod]
-*.pyo
 
-# OS files
-.DS_Store
 
-# Notebook checkpoints
 .ipynb_checkpoints/
+*.nbconvert.ipynb
 
-# Virtual environments and local env files
 .venv/
 venv/
 env/
 .env
+.envrc
 
-# Build / packaging artifacts
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+
 build/
 dist/
 *.egg-info/
 *.egg
-.cache/
 
-# Tool caches
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
+.DS_Store
+.vscode/
+.idea/
+Thumbs.db
 
-# Data outputs (keep raw + metadata tracked)
+*.log
+logs/
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
 data/interim/
 data/processed/
 
-# Model artifacts: ignore contents, keep folder
+
 models/*
 !models/.gitkeep
 
 
-.vscode/
-.idea/
+reports/figures/
+reports/tables/
+reports/summary/

@@ -10,6 +10,7 @@ class ProjectConfig:
     test_size: float = 0.2
 
     # Targets (TODO: confirm exact column names)
+
     pcos_target_column: str = "PCOS (Y/N)"
     endo_target_column: str = "Diagnosis"
 
