@@ -1,7 +1,9 @@
+
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from src.utils.config import CONFIG
 
 
 def build_pcos_preprocessor(x, scale_numeric: bool = False) -> ColumnTransformer:
@@ -26,3 +28,9 @@ def build_pcos_preprocessor(x, scale_numeric: bool = False) -> ColumnTransformer
             ("cat", categorical_transformer, categorical_features),
         ]
     )
+
+
+# Example usage of CONFIG in this module:
+def example_usage():
+    print("Random state:", CONFIG.random_state)
+    print("Test size:", CONFIG.test_size)
