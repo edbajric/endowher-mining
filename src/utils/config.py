@@ -10,7 +10,7 @@ class ProjectConfig:
 
     # TODO: Confirm exact column names in each dataset before training.
     pcos_target_column: str = "PCOS (Y/N)"
-    endo_target_column: str = "TARGET_COLUMN_TO_CONFIRM"
+    endo_target_column: str = "CHANGEME_TARGET_COLUMN"
 
     pcos_default_filename: str = "pcos.csv"
     endo_default_filename: str = "endometriosis.csv"

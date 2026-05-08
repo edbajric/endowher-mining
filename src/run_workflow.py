@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
@@ -60,8 +58,8 @@ def main():
     cfg = ProjectConfig()
 
     # TODO: Confirm exact file names and target columns before running on real data.
-    pcos_df = load_csv(Path(cfg.pcos_raw_path))
-    endo_df = load_csv(Path(cfg.endo_raw_path))
+    pcos_df = load_csv(cfg.pcos_raw_path)
+    endo_df = load_csv(cfg.endo_raw_path)
 
     _run_dataset_pipeline(pcos_df, cfg.pcos_target_column, "pcos", cfg)
     _run_dataset_pipeline(endo_df, cfg.endo_target_column, "endometriosis", cfg)

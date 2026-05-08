@@ -52,7 +52,9 @@ def train_xgboost_optional(
     try:
         from xgboost import XGBClassifier
     except ImportError as exc:
-        raise ImportError("xgboost is not installed. Install it or skip optional training.") from exc
+        raise ImportError(
+            "xgboost is not installed. Install it with: pip install xgboost>=2.0"
+        ) from exc
 
     if dataset_name == "pcos":
         preprocessor = build_pcos_preprocessor(x_train, scale_numeric=False)
