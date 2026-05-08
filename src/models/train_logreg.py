@@ -1,12 +1,14 @@
+"""Training helpers for logistic regression models."""
+
 from pathlib import Path
 from typing import Dict, Iterable
 
-import joblib
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 
 from src.data.preprocess_endo import build_endo_preprocessor
 from src.data.preprocess_pcos import build_pcos_preprocessor
+from src.utils.io import save_model
 
 
 def train_logistic_regression(
@@ -39,8 +41,7 @@ def train_logistic_regression(
         ]
     )
     pipeline.fit(x_train, y_train)
-    model_out.parent.mkdir(parents=True, exist_ok=True)
-    joblib.dump(pipeline, model_out)
+    save_model(pipeline, model_out)
     return pipeline
 
 

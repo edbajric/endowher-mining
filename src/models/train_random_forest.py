@@ -1,12 +1,23 @@
-from pathlib import Path
-from typing import Dict, Iterable
+"""Training helpers for tree-based models."""
 
-import joblib
-from sklearn.ensemble import RandomForestClassifier
+from pathlib import Path
+from typing import Dict, Iterable, Optional
+
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.pipeline import Pipeline
+from sklearn.tree import DecisionTreeClassifier
 
 from src.data.preprocess_endo import build_endo_preprocessor
 from src.data.preprocess_pcos import build_pcos_preprocessor
+from src.utils.io import save_model
+
+
+def _select_preprocessor(dataset_name: str, x_train, scale_numeric: bool = False):
+    if dataset_name == "pcos":
+        return build_pcos_preprocessor(x_train, scale_numeric=scale_numeric)
+    if dataset_name == "endometriosis":
+        return build_endo_preprocessor(x_train, scale_numeric=scale_numeric)
+    raise ValueError("dataset_name must be 'pcos' or 'endometriosis'")
 
 
 def train_random_forest(
@@ -18,12 +29,7 @@ def train_random_forest(
     n_estimators: int = 300,
     class_weight: str = "balanced",
 ) -> Pipeline:
-    if dataset_name == "pcos":
-        preprocessor = build_pcos_preprocessor(x_train, scale_numeric=False)
-    elif dataset_name == "endometriosis":
-        preprocessor = build_endo_preprocessor(x_train, scale_numeric=False)
-    else:
-        raise ValueError("dataset_name must be 'pcos' or 'endometriosis'")
+    preprocessor = _select_preprocessor(dataset_name, x_train, scale_numeric=False)
 
     pipeline = Pipeline(
         steps=[
@@ -39,8 +45,57 @@ def train_random_forest(
         ]
     )
     pipeline.fit(x_train, y_train)
-    model_out.parent.mkdir(parents=True, exist_ok=True)
-    joblib.dump(pipeline, model_out)
+    save_model(pipeline, model_out)
+    return pipeline
+
+
+def train_decision_tree(
+    x_train,
+    y_train,
+    dataset_name: str,
+    model_out: Path,
+    random_state: int = 42,
+    max_depth: Optional[int] = None,
+) -> Pipeline:
+    preprocessor = _select_preprocessor(dataset_name, x_train, scale_numeric=False)
+    pipeline = Pipeline(
+        steps=[
+            ("preprocessor", preprocessor),
+            ("model", DecisionTreeClassifier(random_state=random_state, max_depth=max_depth)),
+        ]
+    )
+    pipeline.fit(x_train, y_train)
+    save_model(pipeline, model_out)
+    return pipeline
+
+
+def train_gradient_boosting(
+    x_train,
+    y_train,
+    dataset_name: str,
+    model_out: Path,
+    random_state: int = 42,
+    n_estimators: int = 200,
+    learning_rate: float = 0.05,
+    max_depth: int = 3,
+) -> Pipeline:
+    preprocessor = _select_preprocessor(dataset_name, x_train, scale_numeric=False)
+    pipeline = Pipeline(
+        steps=[
+            ("preprocessor", preprocessor),
+            (
+                "model",
+                GradientBoostingClassifier(
+                    n_estimators=n_estimators,
+                    learning_rate=learning_rate,
+                    max_depth=max_depth,
+                    random_state=random_state,
+                ),
+            ),
+        ]
+    )
+    pipeline.fit(x_train, y_train)
+    save_model(pipeline, model_out)
     return pipeline
 
 
@@ -56,17 +111,10 @@ def train_xgboost_optional(
 ):
     try:
         from xgboost import XGBClassifier
-    except ImportError as exc:
-        raise ImportError(
-            "xgboost is not installed. Install it with: pip install xgboost>=2.0"
-        ) from exc
+    except Exception as exc:
+        raise RuntimeError(f"XGBoost import failed: {exc}") from exc
 
-    if dataset_name == "pcos":
-        preprocessor = build_pcos_preprocessor(x_train, scale_numeric=False)
-    elif dataset_name == "endometriosis":
-        preprocessor = build_endo_preprocessor(x_train, scale_numeric=False)
-    else:
-        raise ValueError("dataset_name must be 'pcos' or 'endometriosis'")
+    preprocessor = _select_preprocessor(dataset_name, x_train, scale_numeric=False)
 
     pipeline = Pipeline(
         steps=[
@@ -84,8 +132,7 @@ def train_xgboost_optional(
         ]
     )
     pipeline.fit(x_train, y_train)
-    model_out.parent.mkdir(parents=True, exist_ok=True)
-    joblib.dump(pipeline, model_out)
+    save_model(pipeline, model_out)
     return pipeline
 
 
