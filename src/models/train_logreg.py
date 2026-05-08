@@ -1,0 +1,45 @@
+from pathlib import Path
+from typing import Dict
+
+import joblib
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+
+from src.data.preprocess_endo import build_endo_preprocessor
+from src.data.preprocess_pcos import build_pcos_preprocessor
+
+
+def train_logistic_regression(
+    x_train,
+    y_train,
+    dataset_name: str,
+    model_out: Path,
+    random_state: int = 42,
+) -> Pipeline:
+    if dataset_name == "pcos":
+        preprocessor = build_pcos_preprocessor(x_train, scale_numeric=True)
+    elif dataset_name == "endometriosis":
+        preprocessor = build_endo_preprocessor(x_train, scale_numeric=True)
+    else:
+        raise ValueError("dataset_name must be 'pcos' or 'endometriosis'")
+
+    pipeline = Pipeline(
+        steps=[
+            ("preprocessor", preprocessor),
+            (
+                "model",
+                LogisticRegression(max_iter=1000, random_state=random_state, class_weight="balanced"),
+            ),
+        ]
+    )
+    pipeline.fit(x_train, y_train)
+    model_out.parent.mkdir(parents=True, exist_ok=True)
+    joblib.dump(pipeline, model_out)
+    return pipeline
+
+
+def extract_logreg_coefficients(pipeline: Pipeline, feature_names) -> Dict[str, float]:
+    # Coefficients are only directly interpretable if binary classification and aligned feature names.
+    model = pipeline.named_steps["model"]
+    coef = model.coef_[0]
+    return dict(zip(feature_names, coef))
